@@ -1,0 +1,127 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Node *head = NULL;
+struct Node *new_node;
+
+struct Node {
+    int data;
+    struct Node *next;
+};
+
+void sortedInsert(struct Node **head_ref,
+                  struct Node *new_node) {
+    struct Node *current;
+    if (*head_ref == NULL
+        || (*head_ref)->data
+           >= new_node->data) {
+        new_node->next = *head_ref;
+        *head_ref = new_node;
+    } else {
+        current = *head_ref;
+        while (current->next != NULL
+               && current->next->data < new_node->data) {
+            current = current->next;
+        }
+        new_node->next = current->next;
+        current->next = new_node;
+    }
+}
+
+struct Node *newNode(int new_data) {
+    /* allocate node */
+    struct Node *new_node
+            = (struct Node *) malloc(
+                    sizeof(struct Node));
+    new_node->data = new_data;
+    new_node->next = NULL;
+
+    return new_node;
+}
+
+/* Function to print linked list */
+void printList(struct Node *head) {
+    struct Node *temp = head;
+    while (temp != NULL) {
+        printf("%d ", temp->data);
+        temp = temp->next;
+    }
+}
+
+void deleteKey(struct Node **head_ref, int key) {
+    struct Node *temp = *head_ref, *prev;
+    while (temp != NULL && temp->data == key) {
+        *head_ref = temp->next;
+        free(temp);
+        temp = *head_ref;
+    }
+    while (temp != NULL) {
+        while (temp != NULL && temp->data != key) {
+            prev = temp;
+            temp = temp->next;
+        }
+        if (temp == NULL) return;
+        prev->next = temp->next;
+        free(temp);  // Free memory
+        temp = prev->next;
+    }
+}
+
+void startMenu(int v) {
+    int n;
+    if (v == 1) {
+        printf("Number of elements: ");
+        scanf("%d", &n);
+        printf("Enter elements: ");
+        int a[n];
+        for (int i = 0; i < n; i++) {
+            scanf("%d", &a[i]);
+        }
+
+        for (int i = 0; i < n; i++) {
+            new_node = newNode(a[i]);
+            sortedInsert(&head, new_node);
+        }
+
+    } else if (v == 2) {
+        int key;
+        printf("Enter the key: ");
+        scanf("%d", &key);
+        deleteKey(&head, key);
+    } else {
+        printf("Linked List\n");
+        printList(head);
+    }
+}
+
+/* Given a reference (pointer to pointer) to the head of a list and
+   a key, deletes all occurrence of the given key in linked list */
+
+
+/* Driver program to test count function*/
+int main() {
+
+    while (1) {
+        int choice;
+        printf("\n\n1.Insert list\n2.Delete list\n3.Display list\n4.Exit\n\n");
+        printf("Enter your choice: ");
+        scanf("%d", &choice);
+        switch (choice) {
+            case 1:
+                startMenu(1);
+                break;
+            case 2:
+                startMenu(2);
+                break;
+            case 3:
+                startMenu(0);
+                break;
+            case 4:
+                exit(0);
+            default:
+                printf("Wrong choice :(");
+                break;
+        }
+    }
+    return 0;
+}
